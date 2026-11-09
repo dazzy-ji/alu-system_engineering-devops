@@ -1,1 +1,1 @@
-web servers
+web server and nginx
