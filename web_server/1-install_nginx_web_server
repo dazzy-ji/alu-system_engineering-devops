@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
-# Installs and configures Nginx to serve Holberton School
+# Installs Nginx, configures it to listen on port 80, and serves Holberton School
 
-sudo apt-get update -y
-sudo apt-get install nginx -y
-echo "Holberton School for the win!" | sudo tee /var/www/html/index.nginx-debian.html
-sudo service nginx start
+# Prevent interactive prompts during installation
+export DEBIAN_FRONTEND=noninteractive
+
+# Update and install Nginx
+apt-get update -y
+apt-get install nginx -y
+
+# Write the required string to both index.html (primary priority) and index.nginx-debian.html
+echo "Holberton School for the win!" > /var/www/html/index.html
+echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
+
+# Ensure correct permissions
+chmod 644 /var/www/html/index.html /var/www/html/index.nginx-debian.html
+
+# Restart Nginx without using systemctl
+service nginx restart
