@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-# Installs and configures Nginx to serve a custom welcome string
+# Installs and configures Nginx to serve Holberton School
 
-apt-get update -y
-apt-get install nginx -y
-
-# Configure Nginx to return "Holberton School for the win!" at root
-echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
-
-# Ensure Nginx service is running without using systemctl
-service nginx restart
+sudo apt-get update -y
+sudo apt-get install nginx -y
+echo "Holberton School for the win!" | sudo tee /var/www/html/index.nginx-debian.html
+sudo service nginx start
