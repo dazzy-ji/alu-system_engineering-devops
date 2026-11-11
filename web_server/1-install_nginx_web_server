@@ -1,26 +1,11 @@
 #!/usr/bin/env bash
-# Installs Nginx web server, configures it to listen on port 80, and serves 'Holberton School' at the root
-
-# Non-interactive installation to prevent prompts
-export DEBIAN_FRONTEND=noninteractive
+# Installs Nginx web server and configures root response to contain Holberton School
 
 apt-get update -y
 apt-get install -y nginx
 
-# Ensure the web root directory exists
-mkdir -p /var/www/html
-
-# Write the mandatory text to index.html
 echo "Holberton School" > /var/www/html/index.html
+echo "Holberton School" > /var/www/html/index.nginx-debian.html
 
-# Ensure correct permissions on the web root
-chmod -R 755 /var/www/html
-chown -R www-data:www-data /var/www/html
-
-# Ensure the default site is enabled in sites-enabled
-if [ ! -e /etc/nginx/sites-enabled/default ]; then
-    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-fi
-
-# Restart Nginx to load configuration changes (avoiding systemctl as per requirements)
 service nginx restart
+
