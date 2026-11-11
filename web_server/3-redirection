@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Configures Nginx with a 301 redirection for /redirect_me
+# Configures Nginx with a 301 Moved Permanently redirect from /redirect_me to a YouTube video
 
+# Ensure Nginx is installed
 apt-get update -y
-apt-get install nginx -y
+apt-get install -y nginx
 
-# Insert the redirection block inside the default server configuration before the last closing brace
-sudo sed -i "s|server {|server {\n\tlocation /redirect_me {\n\t\treturn 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n\t}|" /etc/nginx/sites-available/default
+# Insert the redirection rule inside the server block of the default Nginx configuration
+sed -i "/server_name _;/a \    location /redirect_me {\n        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n    }" /etc/nginx/sites-enabled/default
 
-service nginx restart
+# Restart Nginx
+/etc/init.d/nginx restart
