@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Stop apache2 service to free up port 80 and start nginx
+sudo service apache2 stop
+sudo service nginx start
