@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Configures Nginx to serve Holberton School and include a custom X-Served-By response header with the server's hostname
+
+# shellcheck disable=SC2154
+# Ignore SC2154 if variables are referenced from external context or environment
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Update and install Nginx
+apt-get update -y
+apt-get install -y nginx
+
+# Set up default index page content
+echo "Holberton School" > /var/www/html/index.html
+
+# Add the custom header X-Served-By inside the server block of the Nginx configuration
+# We use hostname to dynamically populate the header with the server's hostname
+LINE="    add_header X-Served-By \$hostname;"
+if ! grep -q "X-Served-By" /etc/nginx/sites-available/default; then
+    sed -i "/server_name _;/a \\
+$LINE" /etc/nginx/sites-available/default
+fi
+
+# Restart Nginx using the init script
+service nginx restart
