@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Configure Apache to return Hello Holberton when queried at the root
+echo "Hello Holberton" > /var/www/html/index.html
+service apache2 start
