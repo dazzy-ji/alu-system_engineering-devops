@@ -1,43 +1,30 @@
 #!/usr/bin/env bash
-# Install and configure HAProxy on lb-01 to distribute traffic to web-01 and web-02 using roundrobin
-
-export DEBIAN_FRONTEND=noninteractive
+# Installs and configures HAProxy on lb-01 for round-robin load balancing
 
 apt-get update -y
 apt-get install -y haproxy
 
-# Enable HAProxy init script execution
-sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/haproxy
+# Enable HAProxy to be managed by init script
+if [ -f /etc/default/haproxy ]; then
+    sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+    grep -q 'ENABLED=1' /etc/default/haproxy || echo 'ENABLED=1' >> /etc/default/haproxy
+fi
 
-# Configure HAProxy with exact backend names 'web-01' and 'web-02'
-cat << 'EOF' > /etc/haproxy/haproxy.cfg
-global
-	log /dev/log	local0
-	log /dev/log	local1 notice
-	chroot /var/lib/haproxy
-	user haproxy
-	group haproxy
-	daemon
+# Append frontend and backend configuration to haproxy.cfg
+if ! grep -q 'frontend http-in' /etc/haproxy/haproxy.cfg 2>/dev/null; then
+    cat << 'CFG' >> /etc/haproxy/haproxy.cfg
 
-defaults
-	log	global
-	mode	http
-	option	httplog
-	option	dontlognull
-	timeout connect 5000ms
-	timeout client  50000ms
-	timeout server  50000ms
+frontend http-in
+    bind *:80
+    mode http
+    default_backend web-backend
 
-frontend haproxy_frontend
-	bind *:80
-	default_backend haproxy_backend
+backend web-backend
+    mode http
+    balance roundrobin
+    server 7292-web-01 13.40.55.254:80 check
+    server 7292-web-02 18.130.43.202:80 check
+CFG
+fi
 
-backend haproxy_backend
-	balance roundrobin
-	server web-01 13.40.55.254:80 check
-	server web-02 18.130.43.202:80 check
-EOF
-
-# Test HAProxy config and restart service
-haproxy -c -f /etc/haproxy/haproxy.cfg
 service haproxy restart
