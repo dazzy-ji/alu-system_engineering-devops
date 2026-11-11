@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs and configures HAProxy on lb-01 to distribute traffic to web-01 and web-02 using roundrobin
+# Install and configure HAProxy on lb-01 to distribute traffic to web-01 and web-02 using roundrobin
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -9,7 +9,7 @@ apt-get install -y haproxy
 # Enable HAProxy init script execution
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/haproxy
 
-# Configure HAProxy with exact backend names 'web-01' and 'web-02' as expected by the checker
+# Configure HAProxy with exact backend names 'web-01' and 'web-02'
 cat << 'EOF' > /etc/haproxy/haproxy.cfg
 global
 	log /dev/log	local0
@@ -38,5 +38,6 @@ backend haproxy_backend
 	server web-02 18.130.43.202:80 check
 EOF
 
-# Restart HAProxy
+# Test HAProxy config and restart service
+haproxy -c -f /etc/haproxy/haproxy.cfg
 service haproxy restart

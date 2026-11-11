@@ -10,9 +10,11 @@ apt-get install -y nginx
 # Ensure default index page exists
 echo "Holberton School" > /var/www/html/index.html
 
-# Remove any existing add_header line to prevent duplicates, then insert add_header right inside the server block
-sed -i '/add_header X-Served-By/d' /etc/nginx/sites-available/default
-sed -i '/server_name _;/a \    add_header X-Served-By $hostname;' /etc/nginx/sites-available/default
+# Cleanly insert the add_header directive right below 'listen 80 default_server;' in the default config
+if ! grep -q "X-Served-By" /etc/nginx/sites-available/default; then
+    sed -i '/listen 80 default_server;/a \    add_header X-Served-By $hostname;' /etc/nginx/sites-available/default
+fi
 
-# Restart Nginx via init script
+# Test Nginx configuration and restart via init script
+nginx -t
 service nginx restart
