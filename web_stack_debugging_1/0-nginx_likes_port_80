@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-# Stop apache2 service to free up port 80 and start nginx
+# Stop and disable Apache to free port 80, then start Nginx
 sudo service apache2 stop
-sudo service nginx start
+sudo update-rc.d -f apache2 remove
+sudo service nginx restart
