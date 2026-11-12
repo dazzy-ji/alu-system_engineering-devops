@@ -1,22 +1,18 @@
 #!/usr/bin/env bash
-# Displays DNS record information for a given domain and its subdomains or a specific subdomain
+# Query DNS records for subdomains and display their record type and destination IP
 
-# shellcheck disable=SC2086
 audit_dns() {
     local sub="$1"
     local dom="$2"
-    local full_domain="${sub}.${dom}"
-    
-    # Query dig for the A record and extract the destination IP using awk
-    local record_info
-    record_info=$(dig +noall +answer ${full_domain} A | awk '{print $4, $5}')
-    
-    if [ -n "$record_info" ]; then
-        local rec_type
-        local rec_dest
-        rec_type=$(echo "$record_info" | awk '{print $1}')
-        rec_dest=$(echo "$record_info" | awk '{print $2}')
-        echo "The subdomain ${sub} is a ${rec_type} record and points to ${rec_dest}"
+    # shellcheck disable=SC2086
+    local dig_out
+    dig_out=$(dig +noall +answer "${sub}.${dom}" | awk 'NR==1 {print $4, $5}')
+    if [ -n "$dig_out" ]; then
+        local rectype
+        rectype=$(echo "$dig_out" | awk '{print $1}')
+        local dest
+        dest=$(echo "$dig_out" | awk '{print $2}')
+        echo "The subdomain ${sub} is a ${rectype} record and points to ${dest}"
     fi
 }
 

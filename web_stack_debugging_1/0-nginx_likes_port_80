@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-# Stop and disable Apache to free port 80, then start Nginx
-sudo service apache2 stop
-sudo service nginx restart
+# Configure Nginx to be installed, running, and listening on port 80
+
+apt-get update -y
+apt-get install -y nginx
+service nginx start
