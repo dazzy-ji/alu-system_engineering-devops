@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Configure Nginx to be installed, running, and listening on port 80
-
-apt-get update -y
-apt-get install -y nginx
-service nginx start
+# Fix Nginx to run and listen on port 80
+service apache2 stop 2>/dev/null || true
+service nginx restart
